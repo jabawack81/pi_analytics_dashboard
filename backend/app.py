@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory, send_file
 import requests
 import os
 from datetime import datetime, timedelta
@@ -6,7 +6,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
+# Configure Flask to serve React build files
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='')
+
+# Enable CORS for API routes only
+from flask_cors import CORS
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # PostHog configuration
 POSTHOG_API_KEY = os.getenv('POSTHOG_API_KEY')
@@ -54,5 +59,20 @@ def health_check():
     """Health check endpoint"""
     return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()})
 
+# Serve React App
+@app.route('/')
+def serve_react_app():
+    """Serve the React application"""
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static_files(path):
+    """Serve static files from React build"""
+    try:
+        return send_from_directory(app.static_folder, path)
+    except FileNotFoundError:
+        # If file not found, serve index.html for React Router
+        return send_from_directory(app.static_folder, 'index.html')
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
