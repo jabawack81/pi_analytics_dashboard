@@ -71,27 +71,45 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>PostHog Analytics Dashboard</h1>
-        <p>Last updated: {stats?.last_updated ? formatTime(stats.last_updated) : 'N/A'}</p>
-      </header>
-      
-      <main className="stats-grid">
-        <div className="stat-card">
-          <h2>Events (24h)</h2>
-          <div className="stat-value">{stats?.events_24h || 0}</div>
+      <div className="circular-container">
+        {/* Center logo/title */}
+        <div className="center-logo">
+          <div className="logo-text">PostHog</div>
+          <div className="logo-subtitle">Analytics</div>
         </div>
-        
-        <div className="stat-card">
-          <h2>Unique Users (24h)</h2>
-          <div className="stat-value">{stats?.unique_users_24h || 0}</div>
+
+        {/* Circular stats layout */}
+        <div className="circular-stats">
+          <div className="stat-circle stat-top">
+            <div className="stat-value">{stats?.events_24h || 0}</div>
+            <div className="stat-label">Events</div>
+          </div>
+
+          <div className="stat-circle stat-left">
+            <div className="stat-value">{stats?.unique_users_24h || 0}</div>
+            <div className="stat-label">Users</div>
+          </div>
+
+          <div className="stat-circle stat-right">
+            <div className="stat-value">{stats?.page_views_24h || 0}</div>
+            <div className="stat-label">Views</div>
+          </div>
         </div>
-        
-        <div className="stat-card">
-          <h2>Page Views (24h)</h2>
-          <div className="stat-value">{stats?.page_views_24h || 0}</div>
+
+        {/* Status and time at bottom */}
+        <div className="bottom-info">
+          <div className="status-indicator">
+            <div className="status-dot active"></div>
+            <span>Live</span>
+          </div>
+          <div className="last-updated">
+            {stats?.last_updated ? formatTime(stats.last_updated) : '--:--'}
+          </div>
         </div>
-      </main>
+
+        {/* Outer ring decoration */}
+        <div className="outer-ring"></div>
+      </div>
     </div>
   );
 };
