@@ -1,41 +1,67 @@
 #!/usr/bin/env python3
 """
-PostHog Pi - Development Server
-Quick way to run the integrated application
+Quick production runner for PostHog Pi
+Builds frontend and starts integrated Flask server
 """
-
+import os
 import subprocess
 import sys
-import os
+from pathlib import Path
 
-def build_frontend():
-    """Build React frontend"""
-    print("Building React frontend...")
-    frontend_dir = os.path.join(os.path.dirname(__file__), 'frontend')
-    
-    # Install npm dependencies
-    subprocess.run(['npm', 'install'], cwd=frontend_dir, check=True)
-    
-    # Build React app
-    subprocess.run(['npm', 'run', 'build'], cwd=frontend_dir, check=True)
-    print("Frontend build complete!")
-
-def run_server():
-    """Run the Flask server"""
-    print("Starting integrated Flask server...")
-    backend_dir = os.path.join(os.path.dirname(__file__), 'backend')
-    
-    # Run the Flask app
-    sys.path.append(backend_dir)
-    from app import app
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
-if __name__ == '__main__':
+def run_command(cmd, cwd=None):
+    """Run a command and wait for completion"""
+    print(f"Running: {' '.join(cmd)}")
     try:
-        build_frontend()
-        run_server()
-    except KeyboardInterrupt:
-        print("\nShutting down server...")
-    except Exception as e:
-        print(f"Error: {e}")
+        result = subprocess.run(cmd, cwd=cwd, check=True)
+        return result.returncode == 0
+    except subprocess.CalledProcessError as e:
+        print(f"Error running command: {e}")
+        return False
+
+def main():
+    # Ensure we're in the right directory
+    script_dir = Path(__file__).parent
+    os.chdir(script_dir)
+    
+    print("🚀 PostHog Pi Quick Production Run")
+    print("=" * 40)
+    
+    # Build frontend
+    print("🔨 Building React frontend...")
+    if not run_command(["npm", "run", "build"], cwd="frontend"):
+        print("❌ Frontend build failed!")
         sys.exit(1)
+    
+    print("✅ Frontend built successfully!")
+    
+    # Check for virtual environment
+    venv_path = Path("backend/venv")
+    if not venv_path.exists():
+        print("🔧 Creating virtual environment...")
+        if not run_command(["python3", "-m", "venv", "venv"], cwd="backend"):
+            print("❌ Failed to create virtual environment!")
+            sys.exit(1)
+    
+    # Install dependencies
+    print("📦 Installing dependencies...")
+    pip_cmd = ["backend/venv/bin/pip", "install", "-r", "backend/requirements.txt"]
+    if not run_command(pip_cmd):
+        print("❌ Failed to install dependencies!")
+        sys.exit(1)
+    
+    # Start the server
+    print("🌶️  Starting integrated Flask server...")
+    print("🌐 Server will be available at: http://localhost:5000")
+    print("💡 Press Ctrl+C to stop")
+    
+    try:
+        python_cmd = ["backend/venv/bin/python3", "backend/app.py"]
+        subprocess.run(python_cmd, check=True)
+    except KeyboardInterrupt:
+        print("\n🛑 Server stopped")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Server error: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

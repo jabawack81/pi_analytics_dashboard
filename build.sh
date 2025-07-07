@@ -1,51 +1,54 @@
 #!/bin/bash
+# Build script for PostHog Pi
 
-# Build script for PostHog Pi Dashboard
-# This script builds the React frontend and prepares the application for deployment
+set -e
 
-echo "Building PostHog Pi Dashboard..."
+echo "🚀 Building PostHog Pi..."
+echo "========================"
 
-# Check if we're in the right directory
-if [ ! -f "backend/app.py" ]; then
-    echo "Error: Please run this script from the project root directory"
+# Check if frontend directory exists
+if [ ! -d "frontend" ]; then
+    echo "❌ Frontend directory not found!"
     exit 1
 fi
 
-# Build React frontend
-echo "Building React frontend..."
-cd frontend
-npm install
-npm run build
-
-if [ $? -eq 0 ]; then
-    echo "✅ React frontend built successfully"
-else
-    echo "❌ React frontend build failed"
+# Check if backend directory exists
+if [ ! -d "backend" ]; then
+    echo "❌ Backend directory not found!"
     exit 1
 fi
 
-# Go back to project root
-cd ..
+# Create backend virtual environment if it doesn't exist
+if [ ! -d "backend/venv" ]; then
+    echo "🔧 Creating Python virtual environment..."
+    cd backend
+    python3 -m venv venv
+    cd ..
+fi
 
-# Install Python dependencies
-echo "Installing Python dependencies..."
+# Install backend dependencies
+echo "📦 Installing backend dependencies..."
 cd backend
-python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+cd ..
 
-if [ $? -eq 0 ]; then
-    echo "✅ Python dependencies installed successfully"
-else
-    echo "❌ Python dependencies installation failed"
-    exit 1
-fi
+# Install frontend dependencies
+echo "📦 Installing frontend dependencies..."
+cd frontend
+npm install
 
-echo "🎉 Build complete!"
+# Build React app
+echo "🔨 Building React application..."
+npm run build
+
+cd ..
+
+echo "✅ Build completed successfully!"
 echo ""
-echo "To run the application locally:"
-echo "  cd backend"
-echo "  source venv/bin/activate"
-echo "  python3 app.py"
+echo "📋 To run the application:"
+echo "   cd backend"
+echo "   source venv/bin/activate"
+echo "   python3 app.py"
 echo ""
-echo "Then visit http://localhost:5000 in your browser"
+echo "🌐 Then visit: http://localhost:5000"
