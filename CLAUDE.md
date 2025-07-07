@@ -102,3 +102,31 @@ The React frontend is specifically optimized for:
 - Display rotation configured in /boot/config.txt
 - Chrome kiosk mode with window size 480x480
 - Systemd service handles auto-start and crash recovery
+
+## Project Context Reference
+
+For complete project context including development history, architecture details, and all features, refer to:
+- `PROJECT_CONTEXT.md` - Complete development history and technical documentation
+- This document contains the full story of how the project evolved through 7 major phases
+- Includes all API endpoints, configuration options, and deployment details
+- Essential reading for understanding the complete IoT device architecture
+
+## Development Phases Summary
+
+The project evolved through these key phases:
+1. **Basic Structure** - Initial Flask API + React frontend
+2. **Round Display UI** - Circular layout optimized for 480x480 display  
+3. **PostHog Branding** - Authentic brand colors and styling
+4. **Development Tools** - File watching, build scripts, dev workflow
+5. **Server Integration** - Single Flask server serving both API and React
+6. **IoT Configuration** - Web-based device management interface
+7. **WiFi Access Point** - First-boot network setup and management
+
+## Key Features
+
+- **Circular Dashboard**: PostHog analytics optimized for round display
+- **Real-time Updates**: 30-second refresh with 5-minute API caching
+- **Web Configuration**: Hidden admin interface at `/config` or `Ctrl+Shift+C`
+- **WiFi Setup**: Automatic access point mode for first-boot configuration
+- **Kiosk Mode**: Auto-start Chrome in fullscreen on boot
+- **Network Management**: Automatic WiFi detection and fallback to AP mode
