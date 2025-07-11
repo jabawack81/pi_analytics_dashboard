@@ -36,6 +36,14 @@ class ConfigManager:
                 "log_level": "INFO",
                 "auto_update": True,
                 "backup_enabled": True
+            },
+            "ota": {
+                "enabled": True,
+                "branch": "main",
+                "check_on_boot": True,
+                "auto_pull": True,
+                "last_update": None,
+                "last_check": None
             }
         }
         self.load_config()

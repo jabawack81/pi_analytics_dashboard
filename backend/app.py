@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, send_from_directory, send_file
+from flask import Flask, jsonify, send_from_directory, send_file, request
 import requests
 import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from config_manager import ConfigManager
+from ota_manager import OTAManager
 
 load_dotenv()
 
@@ -17,6 +19,10 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 POSTHOG_API_KEY = os.getenv('POSTHOG_API_KEY')
 POSTHOG_PROJECT_ID = os.getenv('POSTHOG_PROJECT_ID')
 POSTHOG_HOST = os.getenv('POSTHOG_HOST', 'https://app.posthog.com')
+
+# Initialize managers
+config_manager = ConfigManager()
+ota_manager = OTAManager(config_manager)
 
 @app.route('/api/stats')
 def get_stats():
@@ -59,6 +65,92 @@ def health_check():
     """Health check endpoint"""
     return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()})
 
+# OTA Management API Routes
+@app.route('/api/admin/ota/status')
+def get_ota_status():
+    """Get OTA status and information"""
+    return jsonify(ota_manager.get_status())
+
+@app.route('/api/admin/ota/check')
+def check_for_updates():
+    """Check for available updates"""
+    return jsonify(ota_manager.check_for_updates())
+
+@app.route('/api/admin/ota/update', methods=['POST'])
+def update_system():
+    """Pull latest updates"""
+    return jsonify(ota_manager.pull_updates())
+
+@app.route('/api/admin/ota/switch-branch', methods=['POST'])
+def switch_branch():
+    """Switch to a different branch"""
+    data = request.get_json()
+    branch = data.get('branch')
+    
+    if not branch:
+        return jsonify({"success": False, "error": "Branch name is required"}), 400
+    
+    return jsonify(ota_manager.switch_branch(branch))
+
+@app.route('/api/admin/ota/reset', methods=['POST'])
+def reset_to_remote():
+    """Hard reset to remote branch"""
+    data = request.get_json()
+    branch = data.get('branch')
+    
+    if not branch:
+        return jsonify({"success": False, "error": "Branch name is required"}), 400
+    
+    return jsonify(ota_manager.reset_to_remote(branch))
+
+@app.route('/api/admin/ota/config', methods=['GET', 'POST'])
+def ota_config():
+    """Get or update OTA configuration"""
+    if request.method == 'GET':
+        return jsonify(config_manager.get_section("ota"))
+    
+    data = request.get_json()
+    if config_manager.update_section("ota", data):
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "error": "Failed to update OTA config"}), 500
+
+@app.route('/api/admin/ota/backups')
+def get_backups():
+    """Get list of available backup tags"""
+    return jsonify({"backups": ota_manager.get_backups()})
+
+@app.route('/api/admin/ota/backup', methods=['POST'])
+def create_backup():
+    """Create a backup of current state"""
+    return jsonify(ota_manager.create_backup())
+
+@app.route('/api/admin/ota/rollback', methods=['POST'])
+def rollback_to_backup():
+    """Rollback to a specific backup"""
+    data = request.get_json()
+    backup_tag = data.get('backup_tag')
+    
+    if not backup_tag:
+        return jsonify({"success": False, "error": "Backup tag is required"}), 400
+    
+    return jsonify(ota_manager.rollback_to_backup(backup_tag))
+
+# Configuration API Routes
+@app.route('/api/admin/config')
+def get_config():
+    """Get device configuration"""
+    return jsonify(config_manager.get_config())
+
+@app.route('/api/admin/config', methods=['POST'])
+def update_config():
+    """Update device configuration"""
+    data = request.get_json()
+    if config_manager.update_config(data):
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "error": "Failed to update config"}), 500
+
 # Serve React App
 @app.route('/')
 def serve_react_app():
@@ -75,4 +167,14 @@ def serve_static_files(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
+    # Perform boot update check if enabled
+    try:
+        boot_result = ota_manager.perform_boot_update()
+        if boot_result.get('error'):
+            print(f"Boot update warning: {boot_result['error']}")
+        elif boot_result.get('success'):
+            print("Boot update completed successfully")
+    except Exception as e:
+        print(f"Boot update check failed: {e}")
+    
     app.run(host='0.0.0.0', port=5000, debug=False)
