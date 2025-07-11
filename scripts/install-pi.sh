@@ -17,12 +17,13 @@ echo
 
 # Configuration
 REPO_URL="https://github.com/jabawack81/posthog_pi.git"
-INSTALL_DIR="/home/pi/posthog_pi"
-USER="pi"
+CURRENT_USER=$(whoami)
+INSTALL_DIR="$HOME/posthog_pi"
 
 # Check if running as pi user
-if [ "$USER" != "pi" ]; then
+if [ "$CURRENT_USER" != "pi" ]; then
     echo -e "${RED}❌ This script should be run as the 'pi' user${NC}"
+    echo "Current user: $CURRENT_USER"
     exit 1
 fi
 
@@ -83,10 +84,11 @@ Wants=network.target
 
 [Service]
 Type=simple
-User=pi
-Group=pi
+User=$CURRENT_USER
+Group=$CURRENT_USER
 WorkingDirectory=$INSTALL_DIR/backend
 Environment=DISPLAY=:0
+Environment=HOME=$HOME
 ExecStart=$INSTALL_DIR/backend/venv/bin/python app.py
 Restart=always
 RestartSec=10
@@ -101,8 +103,8 @@ sudo systemctl enable posthog-display.service
 
 echo -e "${YELLOW}🎮 Step 8: Setting up kiosk mode...${NC}"
 # Create kiosk startup script
-mkdir -p /home/pi/.config/openbox
-tee /home/pi/.config/openbox/autostart > /dev/null <<EOF
+mkdir -p $HOME/.config/openbox
+tee $HOME/.config/openbox/autostart > /dev/null <<EOF
 # Wait for the display service to start
 sleep 10
 
@@ -127,7 +129,7 @@ EOF
 # Set up auto-login
 sudo tee /etc/lightdm/lightdm.conf > /dev/null <<EOF
 [Seat:*]
-autologin-user=pi
+autologin-user=$CURRENT_USER
 autologin-user-timeout=0
 user-session=openbox
 EOF
