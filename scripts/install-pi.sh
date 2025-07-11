@@ -20,12 +20,7 @@ REPO_URL="https://github.com/jabawack81/posthog_pi.git"
 CURRENT_USER=$(whoami)
 INSTALL_DIR="$HOME/posthog_pi"
 
-# Check if running as pi user
-if [ "$CURRENT_USER" != "pi" ]; then
-    echo -e "${RED}❌ This script should be run as the 'pi' user${NC}"
-    echo "Current user: $CURRENT_USER"
-    exit 1
-fi
+echo -e "${GREEN}Installing PostHog Pi for user: $CURRENT_USER${NC}"
 
 echo -e "${YELLOW}📦 Step 1: Installing system dependencies...${NC}"
 sudo apt update
