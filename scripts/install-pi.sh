@@ -74,13 +74,13 @@ npm install --no-audit --no-fund --maxsockets 1
 
 # Set Node.js memory options for Raspberry Pi
 echo "Building React with memory optimizations for Raspberry Pi..."
-export NODE_OPTIONS="--max_old_space_size=512 --optimize_for_size"
+export NODE_OPTIONS="--max_old_space_size=512"
 export GENERATE_SOURCEMAP=false
 
 # Try building with reduced memory usage
 if ! npm run build; then
     echo -e "${YELLOW}Build failed, trying with more aggressive memory limits...${NC}"
-    export NODE_OPTIONS="--max_old_space_size=256 --optimize_for_size"
+    export NODE_OPTIONS="--max_old_space_size=256"
     
     if ! npm run build; then
         echo -e "${RED}❌ React build failed even with memory optimizations${NC}"
