@@ -18,6 +18,11 @@ interface DeviceConfig {
     brightness: number;
     rotation: number;
     screensaver_timeout: number;
+    metrics: {
+      top: { type: string; label: string; enabled: boolean };
+      left: { type: string; label: string; enabled: boolean };
+      right: { type: string; label: string; enabled: boolean };
+    };
   };
   network: {
     wifi_ssid: string;
@@ -38,6 +43,13 @@ interface DeviceConfig {
     auto_pull: boolean;
     last_update: string | null;
     last_check: string | null;
+  };
+}
+
+interface AvailableMetrics {
+  [key: string]: {
+    label: string;
+    description: string;
   };
 }
 
@@ -83,6 +95,7 @@ const ConfigPage: React.FC = () => {
   const [config, setConfig] = useState<DeviceConfig | null>(null);
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
   const [otaStatus, setOtaStatus] = useState<OTAStatus | null>(null);
+  const [availableMetrics, setAvailableMetrics] = useState<AvailableMetrics>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('device');
@@ -97,6 +110,7 @@ const ConfigPage: React.FC = () => {
     loadConfig();
     loadDeviceInfo();
     loadOTAStatus();
+    loadAvailableMetrics();
   }, []);
 
   const loadConfig = async () => {
@@ -128,6 +142,16 @@ const ConfigPage: React.FC = () => {
       setOtaStatus(data);
     } catch (error) {
       console.error('Failed to load OTA status:', error);
+    }
+  };
+
+  const loadAvailableMetrics = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/metrics/available`);
+      const data = await response.json();
+      setAvailableMetrics(data);
+    } catch (error) {
+      console.error('Failed to load available metrics:', error);
     }
   };
 
@@ -179,6 +203,7 @@ const ConfigPage: React.FC = () => {
       setTestingConnection(false);
     }
   };
+
 
   const resetConfig = async () => {
     if (!window.confirm('Are you sure you want to reset all settings to defaults?')) return;
@@ -489,6 +514,71 @@ const ConfigPage: React.FC = () => {
                   <option value="270">270°</option>
                 </select>
               </div>
+              
+              <h3>Dashboard Metrics</h3>
+              <p>Configure which metrics are displayed on the dashboard</p>
+              
+              {['top', 'left', 'right'].map((position) => (
+                <div key={position} className="metric-config-group">
+                  <h4>{position.charAt(0).toUpperCase() + position.slice(1)} Position</h4>
+                  <div className="form-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={config.display.metrics[position as keyof typeof config.display.metrics].enabled}
+                        onChange={(e) => {
+                          const newMetrics = { ...config.display.metrics };
+                          newMetrics[position as keyof typeof newMetrics].enabled = e.target.checked;
+                          updateConfig('display', 'metrics', newMetrics);
+                        }}
+                      />
+                      Enable metric
+                    </label>
+                  </div>
+                  {config.display.metrics[position as keyof typeof config.display.metrics].enabled && (
+                    <>
+                      <div className="form-group">
+                        <label>Metric Type</label>
+                        <select
+                          value={config.display.metrics[position as keyof typeof config.display.metrics].type}
+                          onChange={(e) => {
+                            const newMetrics = { ...config.display.metrics };
+                            const selectedMetric = availableMetrics[e.target.value];
+                            newMetrics[position as keyof typeof newMetrics] = {
+                              type: e.target.value,
+                              label: selectedMetric?.label || e.target.value,
+                              enabled: true
+                            };
+                            updateConfig('display', 'metrics', newMetrics);
+                          }}
+                        >
+                          {Object.entries(availableMetrics).map(([key, metric]) => (
+                            <option key={key} value={key}>
+                              {metric.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label>Display Label</label>
+                        <input
+                          type="text"
+                          value={config.display.metrics[position as keyof typeof config.display.metrics].label}
+                          onChange={(e) => {
+                            const newMetrics = { ...config.display.metrics };
+                            newMetrics[position as keyof typeof newMetrics].label = e.target.value;
+                            updateConfig('display', 'metrics', newMetrics);
+                          }}
+                          placeholder="Custom label"
+                        />
+                      </div>
+                      <small className="metric-description">
+                        {availableMetrics[config.display.metrics[position as keyof typeof config.display.metrics].type]?.description}
+                      </small>
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
           )}
 

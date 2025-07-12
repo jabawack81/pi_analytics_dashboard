@@ -104,12 +104,39 @@ The Flask API integrates with PostHog's REST API to fetch:
 
 API endpoints are cached for 5 minutes to reduce API calls.
 
+## Dashboard Metrics Configuration
+
+The dashboard displays configurable PostHog metrics in three circular positions:
+
+### Available Metrics
+- **Events (24h)**: Total events in last 24 hours
+- **Users (24h)**: Unique users in last 24 hours  
+- **Page Views (24h)**: Page view events in last 24 hours
+- **Custom Events (24h)**: Non-pageview events in last 24 hours
+- **Sessions (24h)**: Unique sessions in last 24 hours
+- **Events (1h)**: Events in last hour
+- **Avg Events/User**: Average events per user (24h)
+
+### Configuration
+- Access via `/config` → "Display" tab → "Dashboard Metrics"
+- Configure each position (top, left, right) independently
+- Enable/disable metrics per position
+- Choose metric type from dropdown
+- Customize display labels
+- Real-time preview of changes
+
+### Layout Positions
+```
+    [TOP]
+[LEFT] 🟡 [RIGHT]
+```
+
 ## Display Optimization
 
 The React frontend is specifically optimized for:
 - 480x480 circular display
 - Dark theme for better visibility
-- Responsive grid layout
+- Responsive grid layout with configurable metrics
 - Auto-refresh every 30 seconds
 - Error handling and loading states
 

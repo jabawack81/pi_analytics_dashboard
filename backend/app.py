@@ -50,15 +50,51 @@ def get_stats():
         
         events = response.json().get('results', [])
         
-        return jsonify({
-            "events_24h": len(events),
-            "unique_users_24h": len(set(event.get('distinct_id') for event in events)),
-            "page_views_24h": len([e for e in events if e.get('event') == '$pageview']),
+        # Calculate various metrics
+        total_events = len(events)
+        unique_users = len(set(event.get('distinct_id') for event in events))
+        page_views = len([e for e in events if e.get('event') == '$pageview'])
+        custom_events = total_events - page_views
+        sessions = len(set(event.get('$session_id') for event in events if event.get('$session_id')))
+        
+        # Get recent events (last 10)
+        recent_events = events[:10] if events else []
+        
+        # Calculate metrics for different time periods
+        now = datetime.now()
+        last_hour = now - timedelta(hours=1)
+        events_last_hour = len([e for e in events if datetime.fromisoformat(e.get('timestamp', '').replace('Z', '+00:00')) > last_hour])
+        
+        all_metrics = {
+            "events_24h": total_events,
+            "unique_users_24h": unique_users,
+            "page_views_24h": page_views,
+            "custom_events_24h": custom_events,
+            "sessions_24h": sessions,
+            "events_1h": events_last_hour,
+            "avg_events_per_user": round(total_events / unique_users, 1) if unique_users > 0 else 0,
+            "recent_events": recent_events,
             "last_updated": datetime.now().isoformat()
-        })
+        }
+        
+        return jsonify(all_metrics)
         
     except Exception as e:
         return jsonify({"error": f"Failed to fetch PostHog data: {str(e)}"})
+
+@app.route('/api/metrics/available')
+def get_available_metrics():
+    """Get list of available metrics for configuration"""
+    available_metrics = {
+        "events_24h": {"label": "Events (24h)", "description": "Total events in last 24 hours"},
+        "unique_users_24h": {"label": "Users (24h)", "description": "Unique users in last 24 hours"},
+        "page_views_24h": {"label": "Page Views (24h)", "description": "Page view events in last 24 hours"},
+        "custom_events_24h": {"label": "Custom Events (24h)", "description": "Non-pageview events in last 24 hours"},
+        "sessions_24h": {"label": "Sessions (24h)", "description": "Unique sessions in last 24 hours"},
+        "events_1h": {"label": "Events (1h)", "description": "Events in last hour"},
+        "avg_events_per_user": {"label": "Avg Events/User", "description": "Average events per user (24h)"}
+    }
+    return jsonify(available_metrics)
 
 @app.route('/api/health')
 def health_check():
@@ -150,6 +186,7 @@ def update_config():
         return jsonify({"success": True})
     else:
         return jsonify({"success": False, "error": "Failed to update config"}), 500
+
 
 # Serve React App
 @app.route('/')
