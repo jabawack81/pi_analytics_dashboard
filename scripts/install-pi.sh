@@ -55,8 +55,55 @@ pip install -r requirements.txt
 
 echo -e "${YELLOW}📱 Step 4: Building React frontend...${NC}"
 cd "$INSTALL_DIR/frontend"
-npm install
-npm run build
+
+# Check available memory and enable swap if needed
+echo "Checking system memory..."
+AVAILABLE_MEM=$(free -m | awk 'NR==2{print $7}')
+echo "Available memory: ${AVAILABLE_MEM}MB"
+
+if [ "$AVAILABLE_MEM" -lt 200 ]; then
+    echo -e "${YELLOW}Low memory detected, enabling temporary swap file...${NC}"
+    sudo dd if=/dev/zero of=/tmp/swapfile bs=1M count=512 2>/dev/null || true
+    sudo mkswap /tmp/swapfile 2>/dev/null || true
+    sudo swapon /tmp/swapfile 2>/dev/null || true
+fi
+
+# Install dependencies with reduced parallelism for low-memory systems
+echo "Installing Node.js dependencies with memory optimizations..."
+npm install --no-audit --no-fund --maxsockets 1
+
+# Set Node.js memory options for Raspberry Pi
+echo "Building React with memory optimizations for Raspberry Pi..."
+export NODE_OPTIONS="--max_old_space_size=512 --optimize_for_size"
+export GENERATE_SOURCEMAP=false
+
+# Try building with reduced memory usage
+if ! npm run build; then
+    echo -e "${YELLOW}Build failed, trying with more aggressive memory limits...${NC}"
+    export NODE_OPTIONS="--max_old_space_size=256 --optimize_for_size"
+    
+    if ! npm run build; then
+        echo -e "${RED}❌ React build failed even with memory optimizations${NC}"
+        echo -e "${YELLOW}💡 Troubleshooting suggestions:${NC}"
+        echo "1. Ensure you have at least 512MB free RAM"
+        echo "2. Close other applications to free memory"
+        echo "3. Consider adding permanent swap space:"
+        echo "   sudo dphys-swapfile setup"
+        echo "   sudo dphys-swapfile swapon"
+        echo "4. Or try building on a machine with more RAM and copying the build folder"
+        echo
+        echo -e "${YELLOW}You can also skip the build and use the pre-built files by running:${NC}"
+        echo "   cd $INSTALL_DIR && git checkout origin/main -- frontend/build"
+        exit 1
+    fi
+fi
+
+# Clean up temporary swap file if we created one
+if [ -f /tmp/swapfile ]; then
+    echo "Cleaning up temporary swap file..."
+    sudo swapoff /tmp/swapfile 2>/dev/null || true
+    sudo rm -f /tmp/swapfile 2>/dev/null || true
+fi
 
 echo -e "${YELLOW}⚙️ Step 5: Creating configuration files...${NC}"
 cd "$INSTALL_DIR/backend"
