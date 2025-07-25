@@ -1,0 +1,78 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-01-20",
+  "api_endpoints": [
+    "/api/health",
+    "/api/stats", 
+    "/api/metrics/available",
+    "/api/admin/ota/status",
+    "/api/admin/ota/check",
+    "/api/admin/ota/update",
+    "/api/admin/ota/switch-branch",
+    "/api/admin/ota/reset",
+    "/api/admin/ota/backups",
+    "/api/admin/ota/backup",
+    "/api/admin/ota/rollback",
+    "/api/admin/ota/config",
+    "/api/admin/config",
+    "/api/admin/device",
+    "/config",
+    "/"
+  ],
+  "configuration_keys": [
+    "POSTHOG_API_KEY",
+    "POSTHOG_PROJECT_ID", 
+    "POSTHOG_HOST",
+    "device_config.display",
+    "device_config.ota",
+    "device_config.network"
+  ],
+  "scripts": [
+    "install-pi.sh",
+    "quality-check.sh",
+    "sync-docs.sh",
+    "check-docs.sh",
+    "detect-doc-changes.sh",
+    "preview-docs.sh",
+    "boot-update.py",
+    "network-manager.py",
+    "start-kiosk.sh",
+    "install-pre-commit.sh"
+  ],
+  "features": [
+    "real-time-analytics",
+    "ota-updates",
+    "wifi-setup",
+    "web-configuration",
+    "quality-gate",
+    "docsify-docs",
+    "hyperpixel-display",
+    "metrics-configuration"
+  ],
+  "documentation_files": {
+    "README.md": {
+      "purpose": "Project overview and quick start",
+      "must_contain": ["features", "api-endpoints", "configuration", "quality-gate"]
+    },
+    "QUICK_START.md": {
+      "purpose": "Detailed installation and setup",
+      "must_contain": ["one-command-install", "configuration", "troubleshooting"]
+    },
+    "OTA_README.md": {
+      "purpose": "OTA update system documentation",
+      "must_contain": ["api-endpoints", "branch-strategy", "configuration"]
+    },
+    "CLAUDE.md": {
+      "purpose": "Development guidelines",
+      "must_contain": ["quality-gate", "documentation-requirements"]
+    },
+    "PROJECT_CONTEXT.md": {
+      "purpose": "Technical details and history",
+      "must_contain": ["architecture", "development-phases"]
+    },
+    "DOCUMENTATION_CHECKLIST.md": {
+      "purpose": "Documentation update guide",
+      "must_contain": ["checklist", "validation", "formats"]
+    }
+  }
+}

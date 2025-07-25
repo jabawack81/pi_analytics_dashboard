@@ -1,0 +1,72 @@
+{
+  "ignore_patterns": {
+    "files": [
+      "**/*.test.*",
+      "**/*.spec.*",
+      "**/test_*",
+      "**/__pycache__/**",
+      "**/node_modules/**",
+      "**/venv/**",
+      "**/.git/**",
+      "**/build/**",
+      "**/dist/**"
+    ],
+    "changes": [
+      "refactor",
+      "style",
+      "test",
+      "chore",
+      "perf",
+      "revert"
+    ],
+    "commits": [
+      "^(style|refactor|test|chore|perf|revert):",
+      "formatting",
+      "linting",
+      "typo",
+      "whitespace",
+      "comment",
+      "cleanup"
+    ]
+  },
+  "doc_required_patterns": {
+    "files": [
+      "**/app.py",
+      "**/config*.py",
+      "**/api/**",
+      "scripts/*.sh",
+      "scripts/*.py"
+    ],
+    "changes": [
+      "feat",
+      "feature",
+      "add",
+      "new",
+      "breaking",
+      "api",
+      "config"
+    ],
+    "keywords": [
+      "@app.route",
+      "def.*api",
+      "class.*Config",
+      "BREAKING",
+      "TODO.*doc",
+      "argparse",
+      "click.command"
+    ]
+  },
+  "exceptions": {
+    "internal_only": [
+      "test utilities",
+      "debug functions",
+      "internal helpers",
+      "private methods"
+    ],
+    "auto_generated": [
+      "package-lock.json",
+      "*.lock",
+      "requirements.txt updates for security"
+    ]
+  }
+}
