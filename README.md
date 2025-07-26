@@ -2,7 +2,7 @@
 
 IoT analytics dashboard displaying PostHog data on a Raspberry Pi with HyperPixel Round display.
 
-📚 **[View Full Documentation](https://jabawack81.github.io/posthog_pi/)** | 🚀 **[Quick Start Guide](https://jabawack81.github.io/posthog_pi/#/QUICK_START)**
+📚 **[View Full Documentation](https://jabawack81.github.io/pi_analytics_dashboard/)** | 🚀 **[Quick Start Guide](https://jabawack81.github.io/pi_analytics_dashboard/#/QUICK_START)**
 
 ## Features
 

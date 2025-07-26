@@ -7,14 +7,14 @@
 After flashing Raspberry Pi OS and first boot:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/jabawack81/posthog_pi/main/scripts/install-pi.sh | bash
+curl -sSL https://raw.githubusercontent.com/jabawack81/pi_analytics_dashboard/main/scripts/install-pi.sh | bash
 ```
 
 Or manually:
 
 ```bash
 # Download and run installer
-wget https://raw.githubusercontent.com/jabawack81/posthog_pi/main/scripts/install-pi.sh
+wget https://raw.githubusercontent.com/jabawack81/pi_analytics_dashboard/main/scripts/install-pi.sh
 chmod +x install-pi.sh
 ./install-pi.sh
 ```
@@ -59,8 +59,8 @@ If you prefer manual setup:
 
 ### **1. Clone Repository**
 ```bash
-git clone https://github.com/jabawack81/posthog_pi.git
-cd posthog_pi
+git clone https://github.com/jabawack81/pi_analytics_dashboard.git
+cd pi_analytics_dashboard
 ```
 
 ### **2. Backend Setup**

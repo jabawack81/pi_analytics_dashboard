@@ -2,7 +2,7 @@
 
 ## Overview
 
-Pi Analytics Dashboard provides a RESTful API for accessing analytics data and managing the device.
+PostHog Pi provides a RESTful API for accessing analytics data and managing the device.
 
 ## Base URL
 

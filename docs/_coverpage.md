@@ -14,5 +14,4 @@
 - 📱 Optimized for HyperPixel Round display
 
 [Get Started](QUICK_START.md)
-[GitHub](https://github.com/jabawack81/posthog_pi)
-
+[GitHub](https://github.com/jabawack81/pi_analytics_dashboard)
