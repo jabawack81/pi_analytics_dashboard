@@ -1,4 +1,4 @@
-# PostHog Pi
+# Pi Analytics Dashboard
 
 IoT analytics dashboard displaying PostHog data on a Raspberry Pi with HyperPixel Round display.
 
@@ -8,7 +8,7 @@ IoT analytics dashboard displaying PostHog data on a Raspberry Pi with HyperPixe
 
 - Real-time PostHog analytics display
 - Circular UI optimized for 480x480 round display
-- PostHog brand colors and styling
+- Modern dark theme with circular design elements
 - Integrated Flask server (single port)
 - Auto-refresh dashboard
 

@@ -28,7 +28,7 @@ SCRIPTS_DIR := scripts
 
 menu:
 	@echo -e "$(BLUE)╔══════════════════════════════════════════════════════════════╗$(NC)"
-	@echo -e "$(BLUE)║$(WHITE)           Pi Analytics Dashboard Development Menu              $(BLUE)║$(NC)"
+	@echo -e "$(BLUE)║$(WHITE)           Pi Analytics Dashboard Development Menu            $(BLUE)║$(NC)"
 	@echo -e "$(BLUE)╠══════════════════════════════════════════════════════════════╣$(NC)"
 	@echo -e "$(BLUE)║$(NC) $(CYAN)Development:$(NC)                                               $(BLUE)║$(NC)"
 	@echo -e "$(BLUE)║$(NC)   $(GREEN)1)$(NC) Start development servers (Frontend + Backend)        $(BLUE)║$(NC)"

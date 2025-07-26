@@ -174,6 +174,33 @@ Check the following if you encounter issues:
 4. **Logs**: Review application logs
 5. **Permissions**: Ensure correct file permissions
 
+### Network Management
+
+For advanced network troubleshooting, use the network manager script:
+
+```bash
+# Check network status
+python3 scripts/network-manager.py status
+
+# Scan for available WiFi networks
+python3 scripts/network-manager.py scan
+
+# Start access point mode for setup
+python3 scripts/network-manager.py start-ap
+
+# Stop access point mode
+python3 scripts/network-manager.py stop-ap
+
+# Ensure network is properly configured
+python3 scripts/network-manager.py ensure-setup
+```
+
+The network manager handles:
+- WiFi access point setup (SSID: `Pi-Analytics-Setup`)
+- Network detection and connection
+- Fallback to AP mode when no network available
+- Automatic network transitions
+
 ## 🎉 Success!
 
 Once installed, your PostHog Pi will:

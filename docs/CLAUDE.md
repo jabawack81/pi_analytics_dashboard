@@ -57,6 +57,31 @@ npm run quality                # All frontend checks
 - **REFER TO** `DOCUMENTATION_CHECKLIST.md` for detailed requirements
 - **TREAT** documentation failures as test failures
 
+### How Documentation Freshness is Detected
+
+The project uses multiple methods to ensure documentation stays current:
+
+1. **Intelligent Change Detection** (`scripts/detect-doc-changes.sh`):
+   - Analyzes Git history since last doc update
+   - Detects new API endpoints, scripts, dependencies
+   - Checks commit messages for feature additions
+   - Suggests specific documentation updates needed
+
+2. **Manifest Validation** (`scripts/validate-docs.sh`):
+   - Compares code against `.doc-manifest.json`
+   - Ensures all APIs, configs, scripts are documented
+   - Validates required content in each doc file
+
+3. **Sync Verification**:
+   - Checks if markdown files match Docsify docs
+   - Ensures both formats are identical
+   - Warns about out-of-sync files
+
+4. **Content Analysis**:
+   - Searches for undocumented features
+   - Validates configuration options
+   - Checks for outdated references
+
 ### Quality Tools Setup
 - **Backend**: black, flake8, mypy, pytest (see `backend/requirements-dev.txt`)
 - **Frontend**: ESLint, Prettier, TypeScript checks (see `frontend/package.json`)
