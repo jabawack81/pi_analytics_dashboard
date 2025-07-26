@@ -62,7 +62,7 @@ def main():
         print("🌶️  Starting Flask development server...")
         flask_env = os.environ.copy()
         flask_env["FLASK_DEBUG"] = "1"
-        flask_process = run_command(["python3", "app.py"], cwd=backend_dir)
+        flask_process = run_command(["./venv/bin/python", "app.py"], cwd=backend_dir)
         if flask_process:
             processes.append(flask_process)
             print("✅ Flask development server started")
