@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Development server with file watching for PostHog Pi
+Development server with file watching for Pi Analytics Dashboard
 Automatically builds React and starts Flask dev server
 """
 import os
@@ -30,7 +30,7 @@ def main():
     script_dir = Path(__file__).parent
     os.chdir(script_dir)
     
-    print("🚀 Starting PostHog Pi Development Server")
+    print("🚀 Starting Pi Analytics Dashboard Development Server")
     print("=" * 50)
     
     # Check if frontend directory exists
